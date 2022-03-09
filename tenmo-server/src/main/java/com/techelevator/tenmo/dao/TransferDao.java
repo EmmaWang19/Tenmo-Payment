@@ -6,15 +6,15 @@ import java.util.List;
 
 public interface TransferDao {
 
-    List<Transfer> getHistory();
+    List<Transfer> getHistory(long id);
 
-    List<Transfer> viewPendingRequests();
+    List<Transfer> viewPendingRequests(long id);
 
 //    void sendBucks();
 //
 //    void requestBucks();
 
-    Transfer createTransfer(boolean request);
+    Transfer createTransfer(Transfer transfer);
 
     Transfer updatePending(Transfer transfer, Long id);
 

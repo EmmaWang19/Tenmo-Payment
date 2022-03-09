@@ -79,6 +79,27 @@ public class JdbcUserDao implements UserDao {
         return true;
     }
 
+    @Override
+    public BigDecimal getBalance(long id) {
+        String sql = "Select balance from account where user_id = ?";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
+        if(results.next()){
+            return results.getBigDecimal("balance");
+        }
+        return null;
+    }
+
+    @Override
+    public boolean updateBalance(BigDecimal num, long id) {
+        String sql = "UPDATE account SET balance = ? Where user_id = ?";
+        try {
+            jdbcTemplate.update(sql, num, id);
+        } catch (DataAccessException e){
+            return false;
+        }
+        return true;
+    }
+
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();
         user.setId(rs.getLong("user_id"));

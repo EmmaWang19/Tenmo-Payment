@@ -18,6 +18,7 @@ public interface TransferDao {
 
     Transfer updatePending(Transfer transfer, Long id);
 
+    Transfer getTransferByID(Long id);
 
 
 }

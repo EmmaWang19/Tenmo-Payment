@@ -61,9 +61,9 @@ public class JdbcTransferDao implements TransferDao{
 
     @Override
     public Transfer createTransfer(Transfer transfer) {
-        String sql = "INSERT INTO transfer VALUES (default,(select transfer_type_id from transfer_type where transfer_type_desc = ?),(select transfer_type_status from transfer_status where transfer_status_desc = ?),?,?,?) RETURNING transfer_id;";
+        String sql = "INSERT INTO transfer VALUES (default,(select transfer_type_id from transfer_type where transfer_type_desc = ?),(select transfer_status_id from transfer_status where transfer_status_desc = ?),(select account_id from account where user_id = ?),(select account_id from account where user_id = ?),?) RETURNING transfer_id;";
         long newId = jdbcTemplate.queryForObject(sql,long.class, transfer.getTransferType(),transfer.getTransferStatus(),
-                transfer.getUserFrom(),transfer.getUserTo(),transfer.getAmount());
+                transfer.getAccountFrom(),transfer.getAccountTo(),transfer.getAmount());
         transfer.setId(newId);
         return transfer;
     }

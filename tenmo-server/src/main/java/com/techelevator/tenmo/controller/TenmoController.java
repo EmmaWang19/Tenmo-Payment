@@ -41,10 +41,11 @@ public TenmoController(TransferDao transferDao) {
 @RequestMapping(path = "/send", method = RequestMethod.POST)
     public Transfer sendBucks (@RequestBody Transfer transfer, Principal principal) throws NotAuthorizedException {
     long userId = userDao.findIdByUsername(principal.getName());
-    if (!(transfer.getAccountFrom()==userId)) {
-        throw new NotAuthorizedException();
-    }
-    else if (transfer.getAccountFrom() == transfer.getAccountTo()) {
+    transfer.setAccountFrom(userId);
+//    if (!(transfer.getAccountFrom()==userId)) {
+//        throw new NotAuthorizedException();
+//    }
+    if (transfer.getAccountFrom() == transfer.getAccountTo()) {
         throw new NotAuthorizedException();
     }
     else if (transfer.getAmount().compareTo(userDao.getBalance(transfer.getAccountFrom())) == 1){
@@ -64,6 +65,7 @@ public TenmoController(TransferDao transferDao) {
 @RequestMapping(path = "/request", method = RequestMethod.POST)
     public Transfer requestBucks (@RequestBody Transfer transfer, Principal principal) throws NotAuthorizedException {
     long userId = userDao.findIdByUsername(principal.getName());
+    transfer.setAccountTo(userId);
     if (!(transfer.getAccountTo()==userId)){
         throw new NotAuthorizedException();
     } else if(transfer.getAccountFrom() == transfer.getAccountTo()){

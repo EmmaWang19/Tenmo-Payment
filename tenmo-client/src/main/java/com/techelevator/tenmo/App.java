@@ -1,15 +1,20 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+import com.techelevator.tenmo.services.TenmoService;
+
+import java.math.BigDecimal;
 
 public class App {
 
     private static final String API_BASE_URL = "http://localhost:8080/";
 
     private final ConsoleService consoleService = new ConsoleService();
+    private final TenmoService tenmoService = new TenmoService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
 
     private AuthenticatedUser currentUser;
@@ -58,6 +63,7 @@ public class App {
         if (currentUser == null) {
             consoleService.printErrorMessage();
         }
+        tenmoService.setAuthToken(currentUser.getToken());
     }
 
     private void mainMenu() {
@@ -86,27 +92,40 @@ public class App {
 
 	private void viewCurrentBalance() {
 		// TODO Auto-generated method stub
-		
+        BigDecimal balance = tenmoService.getBalance();
+        System.out.println(balance);
 	}
 
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
-		
+		Transfer[] transfers = tenmoService.listHistory();
+        for(Transfer transfer: transfers){
+            System.out.println(transfer.toString());
+        }
 	}
 
 	private void viewPendingRequests() {
 		// TODO Auto-generated method stub
-		
+		Transfer[] transfers = tenmoService.listPending();
+        for(Transfer transfer: transfers){
+            System.out.println(transfer.toString());
+        }
 	}
 
 	private void sendBucks() {
 		// TODO Auto-generated method stub
-		
+		int id = consoleService.promptForInt("Id: ");
+        BigDecimal amount = consoleService.promptForBigDecimal("Amount: ");
+        Transfer transfer = tenmoService.sendBucks(id, amount);
+        System.out.println(transfer.toString());
 	}
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub
-		
+		int id = consoleService.promptForInt("Id: ");
+        BigDecimal amount = consoleService.promptForBigDecimal("Amount: ");
+        Transfer transfer = tenmoService.requestBucks(id, amount);
+        System.out.println(transfer.toString());
 	}
 
 }

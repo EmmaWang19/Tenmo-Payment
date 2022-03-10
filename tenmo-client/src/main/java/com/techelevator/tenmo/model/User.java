@@ -41,4 +41,13 @@ public class User {
                 "\n Username: " + username;
 
     }
+
+    public String formatUser(){
+        String output = ""+id;
+        for(int i = output.length(); i < 12; i++){
+            output += " ";
+        }
+        output += username;
+        return output;
+    }
 }

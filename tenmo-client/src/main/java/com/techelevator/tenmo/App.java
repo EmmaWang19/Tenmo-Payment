@@ -101,18 +101,28 @@ public class App {
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
 		Transfer[] transfers = tenmoService.listHistory();
+        System.out.println("\n --------------------------------------------"+
+                "\n Transfers"+
+                "\n ID          From/To             Amount"+
+                "\n --------------------------------------------");
         for(Transfer transfer: transfers){
-            System.out.println(transfer.toString());
+            System.out.println(transfer.toTransferFormat());
         }
+        System.out.println("---------------------");
 	}
 
 	private void viewPendingRequests() {
 		// TODO Auto-generated method stub
+        System.out.println("-------------------------------------------\n" +
+                "Pending Transfers\n" +
+                "ID          To                     Amount\n" +
+                "-------------------------------------------");
 		Transfer[] transfers = tenmoService.listPending();
         for(Transfer transfer: transfers){
-            System.out.println(transfer.toString());
+            System.out.println(transfer.toPendingFormat());
         }
-        int id = consoleService.promptForInt("Id: ");
+        System.out.println("---------");
+        int id = consoleService.promptForInt("Please enter transfer ID to approve/reject (0 to cancel): ");
         consoleService.printApproveMenu();
         int approve = consoleService.promptForInt("Please choose an option: ");
         tenmoService.updatePending(id, approve);
@@ -121,27 +131,32 @@ public class App {
 	private void sendBucks() {
 		// TODO Auto-generated method stub
         showUsers();
-		int id = consoleService.promptForInt("Id: ");
-        BigDecimal amount = consoleService.promptForBigDecimal("Amount: ");
+		int id = consoleService.promptForInt("Enter ID of user you are sending to (0 to cancel): ");
+        BigDecimal amount = consoleService.promptForBigDecimal("Enter amount: ");
         Transfer transfer = tenmoService.sendBucks(id, amount);
-        System.out.println(transfer.toString());
+        //System.out.println(transfer.toString());
 	}
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub
         showUsers();
-		int id = consoleService.promptForInt("Id: ");
-        BigDecimal amount = consoleService.promptForBigDecimal("Amount: ");
+		int id = consoleService.promptForInt("Enter ID of user you are requesting from (0 to cancel): ");
+        BigDecimal amount = consoleService.promptForBigDecimal("Enter amount: ");
         Transfer transfer = tenmoService.requestBucks(id, amount);
-        System.out.println(transfer.toString());
+        //System.out.println(transfer.toString());
 	}
 
     private void showUsers() {
+        System.out.println("-------------------------------------------\n" +
+                "Users\n" +
+                "ID          Name\n" +
+                "-------------------------------------------");
         User[] users = tenmoService.getUsers();
         for(User user: users){
-            System.out.println(user.toString());
+            System.out.println(user.formatUser());
         }
-
+        System.out.println("---------");
+        System.out.println();
     }
 
 }

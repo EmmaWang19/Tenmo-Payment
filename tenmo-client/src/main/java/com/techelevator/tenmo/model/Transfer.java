@@ -27,17 +27,35 @@ public class Transfer {
                 "\n Amount: " + amount;
     }
 
-    public String viewTransfers () {
+    public String toTransferFormat() {
         String Id = "          ";
         String from = "           ";
-        String to = "            ";
-        return "\n --------------------------------------------"+
-                "\n Transfers"+
-                "\n ID"+Id.substring(2)+"From/To"+from.substring(7)+"Amount"+
-                "\n --------------------------------------------"+
-                "\n "+Id.substring(4)+transferType+": "+userFrom+from.substring(userFrom.length()+transferType.length()+2)+"$ "+amount+
-                "\n ---------------"+
-                "\n Please enter transfer ID to view details (0 to cancel): ";
+        String send = transferType.equals("Send") ? "To:   " + userTo : "From: " + userFrom;
+        String output = ""+id;
+        for(int i=output.length(); i<12; i++){
+            output += " ";
+        }
+        String output1 = send;
+        for(int i=output1.length(); i<20; i++){
+            output1 += " ";
+        }
+        return
+               output + output1 + "$ "+amount;
+
+    }
+
+    public String toPendingFormat(){
+        String Id = "          ";
+        String from = "           ";
+        String output = ""+id;
+        for(int i=output.length(); i<12; i++){
+            output += " ";
+        }
+        String output1 = userTo;
+        for(int i=output1.length(); i<20; i++){
+            output1 += " ";
+        }
+        return output + output1 + "$ "+amount;
     }
 
     public Long getId() {

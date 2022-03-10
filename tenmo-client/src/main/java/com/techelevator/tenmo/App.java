@@ -95,7 +95,7 @@ public class App {
 	private void viewCurrentBalance() {
 		// TODO Auto-generated method stub
         BigDecimal balance = tenmoService.getBalance();
-        System.out.println(balance);
+        System.out.println("Your current account balance is: $"+balance);
 	}
 
 	private void viewTransferHistory() {

@@ -105,7 +105,6 @@ public class TenmoService {
         return new HttpEntity<>(transfer, headers);
     }
 
-
     private HttpEntity<Void> makeAuthEntity(){
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(authToken);

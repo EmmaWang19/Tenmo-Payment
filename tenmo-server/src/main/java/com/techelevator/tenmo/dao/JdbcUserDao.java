@@ -91,9 +91,9 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public boolean updateBalance(BigDecimal num, long id) {
-        String sql = "UPDATE account SET balance = ? Where user_id = ?";
+        String sql = "UPDATE account SET balance = ((SELECT balance FROM account WHERE user_id = ?) + ?) Where user_id = ?";
         try {
-            jdbcTemplate.update(sql, num, id);
+            jdbcTemplate.update(sql, id, num, id);
         } catch (DataAccessException e){
             return false;
         }

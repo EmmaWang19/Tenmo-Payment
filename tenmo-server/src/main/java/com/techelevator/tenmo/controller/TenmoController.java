@@ -8,6 +8,7 @@ import com.techelevator.tenmo.model.User;
 import org.apache.catalina.LifecycleState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.NotActiveException;
@@ -38,13 +39,11 @@ public TenmoController(TransferDao transferDao) {
     return transferDao.viewPendingRequests(userId);
 }
 
+@Transactional
 @RequestMapping(path = "/send", method = RequestMethod.POST)
     public Transfer sendBucks (@RequestBody Transfer transfer, Principal principal) throws NotAuthorizedException {
     long userId = userDao.findIdByUsername(principal.getName());
     transfer.setAccountFrom(userId);
-//    if (!(transfer.getAccountFrom()==userId)) {
-//        throw new NotAuthorizedException();
-//    }
     if (transfer.getAccountFrom() == transfer.getAccountTo()) {
         throw new NotAuthorizedException();
     }
@@ -55,10 +54,8 @@ public TenmoController(TransferDao transferDao) {
     }
     transfer.setTransferType("Send");
     transfer.setTransferStatus("Approved");
-    BigDecimal newBalanceFrom = userDao.getBalance(transfer.getAccountFrom()).subtract(transfer.getAmount());
-    BigDecimal newBalanceTo = userDao.getBalance(transfer.getAccountTo()).add(transfer.getAmount());
-    userDao.updateBalance(newBalanceFrom, transfer.getAccountFrom());
-    userDao.updateBalance(newBalanceTo, transfer.getAccountTo());
+    userDao.updateBalance(transfer.getAmount().negate(), transfer.getAccountFrom());
+    userDao.updateBalance(transfer.getAmount(), transfer.getAccountTo());
     return transferDao.createTransfer(transfer);
 }
 
@@ -78,6 +75,7 @@ public TenmoController(TransferDao transferDao) {
     return transferDao.createTransfer(transfer);
 }
 
+@Transactional
 @RequestMapping(path="/request/{id}/{status}", method = RequestMethod.PUT)
     public void updatePendingRequest (@PathVariable long id, @PathVariable String status) throws NotAuthorizedException {
 
@@ -88,10 +86,8 @@ public TenmoController(TransferDao transferDao) {
         if (transfer.getAmount().compareTo(userDao.getBalance(transfer.getAccountFrom()))==1) {
             throw new NotAuthorizedException();
         }
-        BigDecimal newBalanceFrom = userDao.getBalance(transfer.getAccountFrom()).subtract(transfer.getAmount());
-        BigDecimal newBalanceTo = userDao.getBalance(transfer.getAccountTo()).add(transfer.getAmount());
-        userDao.updateBalance(newBalanceFrom, transfer.getAccountFrom());
-        userDao.updateBalance(newBalanceTo, transfer.getAccountTo());
+        userDao.updateBalance(transfer.getAmount().negate(), transfer.getAccountFrom());
+        userDao.updateBalance(transfer.getAmount(), transfer.getAccountTo());
     }
     transferDao.updatePending(status,id);
 }
@@ -110,7 +106,6 @@ public TenmoController(TransferDao transferDao) {
     public Transfer transferDetailById (@PathVariable long id) {
     return transferDao.getTransferByID(id);
 }
-
 
 
 }

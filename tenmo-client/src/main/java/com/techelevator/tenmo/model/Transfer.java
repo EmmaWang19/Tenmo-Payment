@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.model;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 
 public class Transfer {
 
@@ -16,7 +17,7 @@ public class Transfer {
     @Override
     public String toString() {
         return "\n--------------------------------------------" +
-                "\n Transfer" +
+                "\n Transfer Details" +
                 "\n--------------------------------------------" +
                 "\n Id: " + id +
                 "\n Type: " + transferType +
@@ -26,8 +27,18 @@ public class Transfer {
                 "\n Amount: " + amount;
     }
 
-
-
+    public String viewTransfers () {
+        String Id = "          ";
+        String from = "           ";
+        String to = "            ";
+        return "\n --------------------------------------------"+
+                "\n Transfers"+
+                "\n ID"+Id.substring(2)+"From/To"+from.substring(7)+"Amount"+
+                "\n --------------------------------------------"+
+                "\n "+Id.substring(4)+transferType+": "+userFrom+from.substring(userFrom.length()+transferType.length()+2)+"$ "+amount+
+                "\n ---------------"+
+                "\n Please enter transfer ID to view details (0 to cancel): ";
+    }
 
     public Long getId() {
         return id;

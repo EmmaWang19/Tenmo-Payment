@@ -2,12 +2,14 @@ package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
 import com.techelevator.tenmo.services.TenmoService;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class App {
 
@@ -110,10 +112,15 @@ public class App {
         for(Transfer transfer: transfers){
             System.out.println(transfer.toString());
         }
+        int id = consoleService.promptForInt("Id: ");
+        consoleService.printApproveMenu();
+        int approve = consoleService.promptForInt("Please choose an option: ");
+        tenmoService.updatePending(id, approve);
 	}
 
 	private void sendBucks() {
 		// TODO Auto-generated method stub
+        showUsers();
 		int id = consoleService.promptForInt("Id: ");
         BigDecimal amount = consoleService.promptForBigDecimal("Amount: ");
         Transfer transfer = tenmoService.sendBucks(id, amount);
@@ -122,10 +129,19 @@ public class App {
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub
+        showUsers();
 		int id = consoleService.promptForInt("Id: ");
         BigDecimal amount = consoleService.promptForBigDecimal("Amount: ");
         Transfer transfer = tenmoService.requestBucks(id, amount);
         System.out.println(transfer.toString());
 	}
+
+    private void showUsers() {
+        User[] users = tenmoService.getUsers();
+        for(User user: users){
+            System.out.println(user.toString());
+        }
+
+    }
 
 }

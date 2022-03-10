@@ -31,4 +31,14 @@ public class User {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return "\n--------------------------------------------" +
+                "\n User" +
+                "\n--------------------------------------------" +
+                "\n Id: " + id +
+                "\n Username: " + username;
+
+    }
 }

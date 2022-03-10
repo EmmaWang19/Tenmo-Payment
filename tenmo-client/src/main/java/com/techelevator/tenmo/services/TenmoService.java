@@ -3,6 +3,7 @@ package com.techelevator.tenmo.services;
 import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.util.BasicLogger;
 import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class TenmoService {
 
@@ -68,6 +70,32 @@ public class TenmoService {
         transfer.setAmount(amount);
         Transfer returnTransfer = restTemplate.postForObject(API_BASE_URL + "request", makeTransferEntity(transfer), Transfer.class);
         return returnTransfer;
+    }
+
+    public User[] getUsers(){
+        User[] users = null;
+        try{
+            ResponseEntity<User[]> response = restTemplate.exchange(API_BASE_URL + "user", HttpMethod.GET, makeAuthEntity(), User[].class);
+            users = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e){
+            BasicLogger.log(e.getMessage());
+        }
+        return users;
+    }
+
+    public boolean updatePending(long id, int approve){
+        boolean success = false;
+        if(approve == 0){
+            return false;
+        }
+        String status = approve == 1 ? "Approved" : "Rejected";
+        try{
+            restTemplate.put(API_BASE_URL + "request/" + id + "/" + status, makeAuthEntity());
+            success = true;
+        } catch (RestClientResponseException | ResourceAccessException e){
+            BasicLogger.log(e.getMessage());
+        }
+        return success;
     }
 
     private HttpEntity<Transfer> makeTransferEntity(Transfer transfer){

@@ -16,13 +16,13 @@ public class Transfer {
     @Override
     public String toString() {
         return "\n--------------------------------------------" +
-                "\n Hotel Details" +
+                "\n Transfer" +
                 "\n--------------------------------------------" +
                 "\n Id: " + id +
-                "\n Name: " + transferType +
-                "\n Stars: " + transferStatus +
-                "\n Rooms Available: " + userFrom +
-                "\n Cover Image: " + userTo +
+                "\n Type: " + transferType +
+                "\n Status: " + transferStatus +
+                "\n From: " + userFrom +
+                "\n To: " + userTo +
                 "\n Amount: " + amount;
     }
 

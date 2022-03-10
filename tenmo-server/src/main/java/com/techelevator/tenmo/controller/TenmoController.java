@@ -4,13 +4,11 @@ import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.NotAuthorizedException;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import org.apache.catalina.LifecycleState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.NotActiveException;
 import java.math.BigDecimal;
@@ -78,10 +76,39 @@ public TenmoController(TransferDao transferDao) {
     return transferDao.createTransfer(transfer);
 }
 
+@RequestMapping(path="/request/{id}/{status}", method = RequestMethod.PUT)
+    public void updatePendingRequest (@PathVariable long id, @PathVariable String status) throws NotAuthorizedException {
+
+    if (status.equals("Approved")) {
+        Transfer transfer = transferDao.getTransferByID(id);
+        transfer.setAccountFrom(new Long(userDao.findIdByUsername(transfer.getUserFrom())));
+        transfer.setAccountTo(new Long(userDao.findIdByUsername(transfer.getUserTo())));
+        if (transfer.getAmount().compareTo(userDao.getBalance(transfer.getAccountFrom()))==1) {
+            throw new NotAuthorizedException();
+        }
+        BigDecimal newBalanceFrom = userDao.getBalance(transfer.getAccountFrom()).subtract(transfer.getAmount());
+        BigDecimal newBalanceTo = userDao.getBalance(transfer.getAccountTo()).add(transfer.getAmount());
+        userDao.updateBalance(newBalanceFrom, transfer.getAccountFrom());
+        userDao.updateBalance(newBalanceTo, transfer.getAccountTo());
+    }
+    transferDao.updatePending(status,id);
+}
+
 @RequestMapping(path = "/balance", method = RequestMethod.GET)
     public BigDecimal getBalance(Principal principal){
     return userDao.getBalance(userDao.findIdByUsername(principal.getName()));
 }
+
+@RequestMapping(path = "/user", method = RequestMethod.GET)
+    public List<User> listOfUsers () {
+    return userDao.findAll();
+}
+
+@RequestMapping(path = "/transfer/{id}", method = RequestMethod.GET)
+    public Transfer transferDetailById (@PathVariable long id) {
+    return transferDao.getTransferByID(id);
+}
+
 
 
 }

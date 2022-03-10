@@ -50,7 +50,7 @@ public class JdbcTransferDao implements TransferDao{
                 "join tenmo_user uf on uf.user_id = af.user_id \n" +
                 "join tenmo_user uto on uto.user_id = ato.user_id " +
                 "where uf.user_id = ? AND transfer_status_desc='Pending'";
-        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(sql, id, id);
+        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(sql, id);
 
         List<Transfer> results = new ArrayList<>();
         while(resultSet.next()){
@@ -69,8 +69,11 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public Transfer updatePending(Transfer transfer, Long id) {
-        return null;
+    public void updatePending(String status, Long id) {
+        String sql = "UPDATE transfer SET transfer_status_id = \n" +
+                "\t(SELECT transfer_status_id FROM transfer_status WHERE transfer_status_desc = ? )\n" +
+                "WHERE transfer_id = ?;";
+        jdbcTemplate.update(sql,status,id);
     }
 
     @Override

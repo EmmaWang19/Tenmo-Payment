@@ -16,7 +16,7 @@ public interface TransferDao {
 
     Transfer createTransfer(Transfer transfer);
 
-    Transfer updatePending(Transfer transfer, Long id);
+    void updatePending(String status, Long id);
 
     Transfer getTransferByID(Long id);
 
